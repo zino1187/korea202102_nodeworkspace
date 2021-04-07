@@ -160,6 +160,25 @@ app.post("/notice/edit" , function(request, response){
     });
 });
 
+//삭제요청 처리 
+app.post("/notice/del", function(request, response){
+    var notice_id = request.body.notice_id;
+    console.log("넘겨받은  id", notice_id);
+
+    var sql="delete from notice where notice_id=?";
+
+    var con = mysql.createConnection(conStr);//접속
+    con.query(sql, [notice_id], function(err, fields){
+        if(err){
+            console.log(err);
+        }else{
+            response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+            response.end(mymodule.getMsgUrl("삭제완료","/notice/list"));
+        }
+        con.end();//mysql 접속 해제
+    });
+});
+
 var server = http.createServer(app);//http 서버에 expess모듈을 적용
 server.listen(8989, function(){
     console.log("The server using Express module is running at 8989...");
