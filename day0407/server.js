@@ -15,6 +15,8 @@ var static=require("serve-static"); //정적자원을 쉽게 접근하기 위한
 var fs=require("fs");//file system 모듈 가져오기
 var ejs=require("ejs");//서버 측 스크립트인 ejs 관련된 모듈!!
 var mysql = require("mysql");
+var mymodule=require("./lib/mymodule.js");
+
 var app = express();//express 모듈통해 객체 생성 
 
 //mysql 접속 정보 
@@ -54,7 +56,8 @@ app.get("/notice/list", function(request, response){
                 //읽기만 하는게 아니라, 서버에서 실행까지 해야 하므로, render() 메서드를 이용하여 %%영역을
                 //클라이언트에게 보내기 전에, 서버측에서 먼저 실행을 해버리자!!
                 response.end(ejs.render(data,{
-                    noticeList:result
+                    noticeList:result,
+                    lib:mymodule
                 }));
             });
         }
@@ -92,6 +95,14 @@ app.post("/notice/regist", function(request ,response){
         con.end();//mysql 접속 끊기
     });
 });
+
+//목록요청  처리 
+app.get("/notice/detail", function(request, response){
+    
+    var sql="select * from notice where notice_id="+변수; 
+
+});
+
 
 var server = http.createServer(app);//http 서버에 expess모듈을 적용
 server.listen(8989, function(){

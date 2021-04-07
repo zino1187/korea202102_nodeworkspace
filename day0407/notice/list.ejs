@@ -1,9 +1,3 @@
-<%
-function getZeroString(n){
-  var result=(n>=10)?n:"0"+n;
-  return result;
-}        
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,11 +40,13 @@ tr:nth-child(even) {
   <%var notice = noticeList[i]; //배열에서 json 하나 꺼내기 %>    
   <tr>
     <td><%=(totalRecord--)%></td>
-    <td><%=notice.title%></td>
+    <td>
+      <a href="/notice/detail?notice_id=<%=notice.notice_id%>"><%=notice.title%></a>
+    </td>
     <td><%=notice.writer%></td>
     <%var d = new Date(notice.regdate);%>
     <td>
-        <%=d.getFullYear()%>-<%=getZeroString(d.getMonth())+1%>-<%=getZeroString(d.getDate())%>
+        <%=d.getFullYear()%>-<%=lib.getZeroString(d.getMonth()+1)%>-<%=lib.getZeroString(d.getDate())%>
     </td>
     <td><%=notice.hit%></td>
   </tr>
