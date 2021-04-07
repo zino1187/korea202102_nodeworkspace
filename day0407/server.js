@@ -98,11 +98,67 @@ app.post("/notice/regist", function(request ,response){
 
 //목록요청  처리 
 app.get("/notice/detail", function(request, response){
-    
-    var sql="select * from notice where notice_id="+변수; 
+    //get방식으로, 헤더를 통해 전송되어온 파라미터를 확인해보자!!!
+    //console.log(request.query);
+    var notice_id=request.query.notice_id;
+    //var sql="select * from notice where notice_id="+notice_id; 
+    var sql="select * from notice where notice_id=?";
 
+    var con=mysql.createConnection(conStr);//접속
+    con.query(sql, [notice_id] , function(err, result, fields){
+        if(err){
+            console.log(err);
+        }else{
+            //디자인 보여주기 전에, 조회수도 증가시키자!!
+            con.query("update notice set hit=hit+1 where notice_id=?",[notice_id], function(error1, fields){
+                if(error1){
+                    console.log(error1);                        
+                }else{
+                    fs.readFile("./notice/detail.ejs", "utf8" , function(error, data){
+                        if(error){
+                            console.log(error);
+                        }else{
+                            response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                            response.end(ejs.render(data, {
+                                //result 는 한건이라 할지라도 배열이므로, 배열에서 꺼내서 보내주자 
+                                record:result[0]                        
+                            }));
+                        }                 
+                    });                        
+                }
+                con.end(); //mysql 접속 끊기
+            });
+        }
+    });
 });
 
+//글 수정 요청 처리 
+app.post("/notice/edit" , function(request, response){
+    //파라미터 받기!!
+    var title=request.body.title;
+    var writer=request.body.writer;
+    var content=request.body.content;
+    var notice_id=request.body.notice_id;
+
+    console.log("제목은", title);
+    console.log("작성자는", writer);
+    console.log("내용은", content);
+    console.log("notice_id", notice_id);
+
+    //파라미터가 총 4개 필요하다!! 
+    var sql="update notice set title=?, writer=?, content=? where notice_id=?";
+    var con=mysql.createConnection(conStr); //접속
+
+    con.query(sql, [title, writer, content, notice_id], function(error, fields){
+        if(error){
+            console.log(error); //에러 출력은 개발자를 위한 것이다...
+        }else{
+            response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+            response.end(mymodule.getMsgUrl("수정성공","/notice/detail?notice_id="+notice_id));
+        }             
+        con.end(); //mysql 연결 종료
+    });
+});
 
 var server = http.createServer(app);//http 서버에 expess모듈을 적용
 server.listen(8989, function(){

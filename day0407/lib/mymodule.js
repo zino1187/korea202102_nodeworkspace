@@ -22,3 +22,19 @@ exports.getZeroString=function(n){
     var result=(n>=10)?n:"0"+n;
     return result;
 }
+
+/*----------------------------------------------
+메시지 처리 함수 
+alert() 출력할 메시지를 생성해주는 함수
+<script>
+alert(하고픈말);
+location.href= 원하는url
+</script>
+----------------------------------------------*/
+exports.getMsgUrl=function(msg, url){
+    var tag="<script>";
+    tag+="alert('"+msg+"');";
+    tag+="location.href='"+url+"';";
+    tag+="</script>";
+    return tag; //함수 호출자에게 최종적으로 생성된 태그문자열 반환
+}
