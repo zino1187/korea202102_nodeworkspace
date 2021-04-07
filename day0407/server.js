@@ -59,6 +59,10 @@ app.get("/notice/list", function(request, response){
     });
 });
 
+//지정한 url의 post 방식으로 클라이언트의 요청을 받음
+app.post("/notice/regist", function(request ,response){
+    response.end("Do you want to regist?");
+});
 
 var server = http.createServer(app);//http 서버에 expess모듈을 적용
 server.listen(8989, function(){
