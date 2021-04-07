@@ -29,6 +29,9 @@ var conStr={
 //__dirname 전역변수는?  현지 실행중인 js 파일의 디렉토리 위치를 반환
 //즉 현재 실행중인 server.js 의 디렉토리를 반환!!
 app.use(static(__dirname+"/static")); //static을 정적자원이 있는 루트로 지정
+app.use(express.urlencoded({
+    extended:true
+})); //post방식의 데이터를 처리할 수 있도록
 
 /*-----------------------------------------------------------------------
 클라이언트의 요청 처리!!!! 요청url 에 대한 조건문X, 정적자원에 대한 처리필요X
@@ -61,7 +64,33 @@ app.get("/notice/list", function(request, response){
 
 //지정한 url의 post 방식으로 클라이언트의 요청을 받음
 app.post("/notice/regist", function(request ,response){
-    response.end("Do you want to regist?");
+    //1) 클라이언트가 전송한 파라미터들을 받자!!!
+    console.log(request.body);
+    var title=request.body.title;
+    var writer=request.body.writer;
+    var content=request.body.content;
+
+    //2) mysql 접속 후  connection객체 반환
+    var con=mysql.createConnection(conStr);
+
+    //3) 쿼리실행 
+    /*
+    var sql="insert into notice(title, writer, content) ";
+    sql+=" values('"+title+"','"+writer+"','"+content+"')";
+    */
+    //바인드 변수를 이용하면, 따옴표문제를 고민하지 않아도 됨. 단 주의!!
+    //바인드 변수의 사용목적은 따옴표 때문이 아니라, DB의 성능과 관련있다..(java시간에...)
+    var sql="insert into notice(title, writer, content) values(?,?,?)";
+
+    con.query(sql, [title, writer, content], function(err, fields){
+        if(err){
+            console.log(err);
+        }else{
+            response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+            response.end("<script>alert('등록성공');location.href='/notice/list';</script>");
+        }
+        con.end();//mysql 접속 끊기
+    });
 });
 
 var server = http.createServer(app);//http 서버에 expess모듈을 적용
