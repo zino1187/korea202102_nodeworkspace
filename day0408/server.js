@@ -6,6 +6,7 @@ var mysql=require("mysql");
 var mymodule = require("./lib/mymodule.js");
 var fs=require("fs");
 var ejs=require("ejs");
+var path=require("path"); //파일의 경로와 관련되어 유용한 기능을 보유한 모듈, 확장자를 추출하는 기능포함
 var express = require("express");
 
 var app = express();//express객체 생성 
@@ -22,7 +23,9 @@ var upload = multer({
         filename:function(request, file, cb){
             console.log("file is ", file);
             //업로드한 파일에 따라서 파일 확장자는 틀려진다..프로그래밍적으로 정보를 추출해야 한다!!
-            cb(null, file.originalname);
+            //path.extname(file.originalname)  의 결과는 jpg, png...
+            console.log("업로드된 파일의 확장자는 ", path.extname(file.originalname));
+            cb(null, new Date().valueOf()+path.extname(file.originalname));
         }
     })    
 });
@@ -111,6 +114,23 @@ app.get("/gallery/detail", function(request, response){
             });               
         }        
     });
+});
+
+//삭제 요청 처리  ( DB삭제 + 이미지삭제 ) 
+app.get("/gallery/del", function(request, response){
+    
+    var gallery_id=request.query.gallery_id;
+    var filename=request.query.filename;
+    
+    fs.unlink(__dirname+"/static/upload/"+filename, function(err){
+        console.log("삭제완료");
+
+    });
+    
+    //var gallery_id = request.body.gallery_id; //post방식의 파라미터 추출 
+
+    //var sql="delete from gallery where gallery_id="+gallery_id;    
+    response.end("");
 });
 
 

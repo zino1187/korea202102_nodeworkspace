@@ -63,6 +63,13 @@ $(function(){ //onLoad되면....
     getList();
   });
 
+  $($("input[type='button']")[2]).click(function(){ //수정버튼
+    edit();//숙제, 내일 아침에 풀이!!!!
+  });
+  $($("input[type='button']")[3]).click(function(){ //삭제버튼
+    del();
+  });
+
   //파일 선택시.. 
   $("input[type='file']").on("change", function(){
     //preview라는 이미지의 src값을 선택한 값을 변경!!!
@@ -85,7 +92,13 @@ function regist(){
 }
 
 function getList(){
+  location.href="/gallery/list";
+}
 
+function del(){
+  if(confirm("삭제하실래요?")){
+    location.href="/gallery/del?gallery_id=<%=gallery.gallery_id%>&filename=<%=gallery.filename%>";    
+  }
 }
 
 </script>
@@ -104,6 +117,9 @@ function getList(){
                   이때 전송 파라미터로서의 name의 이름은 주로  db의 테이블의 컬럼명과 일치시키는 규칙..
      -->
   <form>
+    <!-- 수정, 삭제시 사용할 gallery_id priamary key 를 히든으로 숨겨놓자 -->
+    <input type="hidden" name="gallery_id" value="<%=gallery.gallery_id%>">
+
     <input type="text" name="title" value="<%=gallery.title%>">
     <input type="text"  name="writer" value="<%=gallery.writer%>">
     <textarea name="content"><%=gallery.content%></textarea>
@@ -114,6 +130,8 @@ function getList(){
     클릭만으로도, 전송이 발생함 , 따라서 일반 버튼화시켜놓자 -->
     <input type="button" value="업로드">
     <input type="button" value="목록">
+    <input type="button" value="수정">
+    <input type="button" value="삭제">
   </form>
 </div>
 
