@@ -8,7 +8,7 @@
 body {font-family: Arial, Helvetica, sans-serif;}
 * {box-sizing: border-box;}
 
-input[type=text], textarea {
+input[type=text], textarea,input[type=file] {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -20,6 +20,10 @@ input[type=text], textarea {
 }
 textarea{
   height:100px;
+}
+/* 미리보기 이미지 */
+#preview{
+  width:300px;  /*너비만 주면 높이면 이미지의 비율을 알아서 잡는다..*/
 }
 
 input[type=button] {
@@ -58,6 +62,18 @@ $(function(){ //onLoad되면....
   $($("input[type='button']")[1]).click(function(){ //목록버튼
     getList();
   });
+
+  //파일 선택시.. 
+  $("input[type='file']").on("change", function(){
+    //preview라는 이미지의 src값을 선택한 값을 변경!!!
+    console.log($(this).val());
+    //지정된 옵션으로 문자열의 일부를 추출
+    var filename=$(this).val().substring( $(this).val().lastIndexOf("\\")+1  , $(this).val().length ); 
+    console.log("추출된 파일명은", filename);
+
+    //$("#preview").attr("src", $(this).val());
+  });
+
 });
 
 function regist(){
@@ -89,6 +105,8 @@ function getList(){
     <input type="text" name="title" placeholder="Your title..">
     <input type="text"  name="writer" placeholder="Your name..">
     <textarea name="content" placeholder="something content...."></textarea>
+    <input type="file">
+    <img src="#" alt="" id="preview">
 
     <!-- input 태그의 type중 submit은 디폴트로 전송기능이 포함되어 있기 때문에 
     클릭만으로도, 전송이 발생함 , 따라서 일반 버튼화시켜놓자 -->
