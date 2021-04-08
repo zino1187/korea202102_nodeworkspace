@@ -71,14 +71,16 @@ $(function(){ //onLoad되면....
     var filename=$(this).val().substring( $(this).val().lastIndexOf("\\")+1  , $(this).val().length ); 
     console.log("추출된 파일명은", filename);
 
-    //$("#preview").attr("src", $(this).val());
+    $("#preview").attr("src", "http://localhost:9999/images/"+filename);
   });
 
 });
 
 function regist(){
-  $("form").attr("action","/notice/regist");  //url 은 개발자가 정한다, 단 서버랑 짝을 맞추자!!
+  $("form").attr("action","/gallery/regist");
   $("form").attr("method","post");  
+  $("form").attr("enctype","multipart/form-data");  //텍스트 아닌 바이너리 형식도 포함되어 있다..
+  //만일 이 속성을 지정하지 않으면, 절대로 바이너리 파일 전송은 불가능하다
   $("form").submit();//전송행위가 발생!!!
 }
 
@@ -105,12 +107,12 @@ function getList(){
     <input type="text" name="title" placeholder="Your title..">
     <input type="text"  name="writer" placeholder="Your name..">
     <textarea name="content" placeholder="something content...."></textarea>
-    <input type="file">
+    <input type="file" name="pic">
     <img src="#" alt="" id="preview">
 
     <!-- input 태그의 type중 submit은 디폴트로 전송기능이 포함되어 있기 때문에 
     클릭만으로도, 전송이 발생함 , 따라서 일반 버튼화시켜놓자 -->
-    <input type="button" value="Submit">
+    <input type="button" value="업로드">
     <input type="button" value="목록">
   </form>
 </div>
