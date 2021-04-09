@@ -3,11 +3,10 @@
     변수화 시켜놓으면 유지보수 하기가 용이하다
     변수간의 순서는 매우 중요하다...
 */
-
-var totalRecord=26; //총 레코드 수 
+var totalRecord=1936; //총 레코드 수 
 var pageSize=10; //페이지당 보여질 레코드 수
-var totalPage=; //공식
-
+var totalPage=Math.ceil(totalRecord/pageSize); //공식
+var blockSize=10; //블럭당 보여질 페이지 수
 %>
 <!DOCTYPE html>
 <html>
@@ -29,6 +28,9 @@ th, td {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+a{
+    text-decoration: none; /* 밑줄 제거 */
+}
 </style>
 </head>
 <body>
@@ -38,6 +40,7 @@ tr:nth-child(even) {
 <%="totalRecord(총 레코드) 는  "+totalRecord%><br>
 <%="pageSize(페이지당 보여질 레코드 수) 는  "+pageSize%><br>
 <%="totalPage(총 페이지 수) 는  "+totalPage%><br>
+<%="blockSize(블럭당 보여질 페이지 수) 는  "+blockSize%><br>
 
 <table>
     <tr>
@@ -56,6 +59,15 @@ tr:nth-child(even) {
         <td>50</td>
     </tr>
     <%}%>
+    <tr>
+        <td colspan="5" style="text-align:center">
+        <a href="#">◀</a>    
+        <%for(var i=1;i<=blockSize;i++){%>
+            <a href="#">[ <%=i%> ]</a>
+        <%}%>
+        <a href="#">▶</a>
+        </td>
+    </tr>
 </table>
 
 </body>
