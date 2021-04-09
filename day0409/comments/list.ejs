@@ -1,3 +1,14 @@
+<%
+/*  페이징 처리를 위한 변수 선언 및 연산
+    변수화 시켜놓으면 유지보수 하기가 용이하다
+    변수간의 순서는 매우 중요하다...
+*/
+
+var totalRecord=26; //총 레코드 수 
+var pageSize=10; //페이지당 보여질 레코드 수
+var totalPage=; //공식
+
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,24 +34,28 @@ tr:nth-child(even) {
 <body>
 
 <h2>뉴스 기사 메인</h2>
-<p>For zebra-striped tables, use the nth-child() selector and add a background-color to all even (or odd) table rows:</p>
+<!--  ejs의 표현식 중  = 은 출력의 단축표현식이다, 주의 세미콜론으로 문장의 마무리를 하지 않는다. -->
+<%="totalRecord(총 레코드) 는  "+totalRecord%><br>
+<%="pageSize(페이지당 보여질 레코드 수) 는  "+pageSize%><br>
+<%="totalPage(총 페이지 수) 는  "+totalPage%><br>
 
 <table>
-  <tr>
-    <th>No</th>
-    <th>뉴스 제목</th>
-    <th>기자명</th>
-    <th>등록일</th>
-    <th>조회수</th>
-  </tr>
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td>
-    <td>50</td>
-    <td>50</td>
-    <td>50</td>
-  </tr>
-
+    <tr>
+        <th>No</th>
+        <th>뉴스 제목</th>
+        <th>기자명</th>
+        <th>등록일</th>
+        <th>조회수</th>
+    </tr>
+    <%for(var i=1;i<=pageSize;i++){%>
+    <tr>
+        <td>Jill</td>
+        <td>Smith</td>
+        <td>50</td>
+        <td>50</td>
+        <td>50</td>
+    </tr>
+    <%}%>
 </table>
 
 </body>
