@@ -155,7 +155,7 @@ app.post("/gallery/edit", upload.single("pic") ,function(request, response){
     var title=request.body.title;
     var writer=request.body.writer;
     var content=request.body.content;
-    var filename=request.body.filename;
+    var filename=request.body.filename;//기존의 파일명
     var gallery_id=request.body.gallery_id;
     
     //클라이언트가 업로드를 원하는지 않하는지를 구분??
@@ -164,23 +164,44 @@ app.post("/gallery/edit", upload.single("pic") ,function(request, response){
     //console.log("request ", request);
 
     if(request.file != undefined){ //업로드를 원하는것임(사진 교체)
-        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
-        response.end("사진도 교체합니다.");
+        console.log("사진도 교체합니다.");
+
         //사진지우기 +  db수정 
         fs.unlink(__dirname+"/static/upload/"+filename, function(err){
             if(err){
                 console.log("삭제실패", err);
             }else{
+                filename=request.file.filename;//새롭게 업로드된 파일명으로 교체..
                 var sql="update gallery set title=?, writer=?, content=?, filename=? where gallery_id=?";
+                
+                var con=mysql.createConnection(conStr); //mysql접속
+                con.query(sql, [title, writer, content, filename, gallery_id] , function(error, fields){
+                    if(error){
+                        console.log("수정실패", error);
+                    }else{
+                        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                        response.end(mymodule.getMsgUrl("수정완료","/gallery/detail?gallery_id="+gallery_id));
+                    }
+                    con.end();//mysql disconnect!!
+                });
             }
         });
         
     }else{ //사진 유지
-        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
-        response.end("사진을 유지합니다.");
-        var sql="update gallery set title=?, writer=?, content=?  where gallery_id=?";
-    }
+        console.log("사진을 유지합니다.");
 
+        var sql="update gallery set title=?, writer=?, content=?  where gallery_id=?";
+        var con = mysql.createConnection(conStr);
+        con.query(sql, [title, writer, content , gallery_id] , function(error, fields){
+            if(error){
+                console.log("수정실패", error);
+            }else{
+                response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                response.end(mymodule.getMsgUrl("수정완료","/gallery/detail?gallery_id="+gallery_id));
+            }     
+            con.end();    
+        });
+    }
 });
 
 var server = http.createServer(app); //기본 모듈에 express 모듈 연결 
