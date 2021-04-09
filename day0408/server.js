@@ -15,6 +15,8 @@ var app = express();//express객체 생성
 app.use(express.static(__dirname+"/static"));
 
 //업로드 모듈을 이용한 업로드 처리  destination:저장할 곳,  filename:저장할 이름
+//노드js 뿐만 아니라, asp, php, jsp 등등은 일단 업로드 컴포넌트를 사용할 경우 
+//모든 post는 이  업로드 컴포넌트를 통해 처리된다..
 var upload = multer({
     storage: multer.diskStorage({
         destination:function(request, file, cb){
@@ -117,20 +119,35 @@ app.get("/gallery/detail", function(request, response){
 });
 
 //삭제 요청 처리  ( DB삭제 + 이미지삭제 ) 
-app.get("/gallery/del", function(request, response){
-    
-    var gallery_id=request.query.gallery_id;
-    var filename=request.query.filename;
+//파일을 업로드 하건 , 안하건 일단 multer를 사용하게 되면, 모든 post방식에 관여하게 되어 있다..
+//node.js...
+app.post("/gallery/del", upload.single("pic") , function(request, response){
+
+    var gallery_id=request.body.gallery_id;
+    var filename=request.body.filename;
+    console.log("gallery_id", gallery_id);
+
     
     fs.unlink(__dirname+"/static/upload/"+filename, function(err){
-        console.log("삭제완료");
-
+        if(err){
+            console.log("삭제실패", err);
+        }else{
+            console.log("삭제성공");
+            //db도 지우자!!
+            var sql="delete from gallery where gallery_id="+gallery_id;
+            var con = mysql.createConnection(conStr);//접속 및 커넥션 객체 반환
+            con.query(sql, function(error, fields){
+                if(error){
+                    console.log("삭제실패", error);
+                }else{
+                    //목록 요청!!
+                    response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                    response.end(mymodule.getMsgUrl("삭제완료","/gallery/list"));
+                }
+                con.end();
+            });
+        }
     });
-    
-    //var gallery_id = request.body.gallery_id; //post방식의 파라미터 추출 
-
-    //var sql="delete from gallery where gallery_id="+gallery_id;    
-    response.end("");
 });
 
 

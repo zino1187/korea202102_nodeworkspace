@@ -97,7 +97,10 @@ function getList(){
 
 function del(){
   if(confirm("삭제하실래요?")){
-    location.href="/gallery/del?gallery_id=<%=gallery.gallery_id%>&filename=<%=gallery.filename%>";    
+    $("form").attr("action","/gallery/del");
+    $("form").attr("method","post");  
+    $("form").attr("enctype","multipart/form-data");
+    $("form").submit();//전송행위가 발생!!!    
   }
 }
 
@@ -119,6 +122,7 @@ function del(){
   <form>
     <!-- 수정, 삭제시 사용할 gallery_id priamary key 를 히든으로 숨겨놓자 -->
     <input type="hidden" name="gallery_id" value="<%=gallery.gallery_id%>">
+    <input type="hidden" name="filename" value="<%=gallery.filename%>">
 
     <input type="text" name="title" value="<%=gallery.title%>">
     <input type="text"  name="writer" value="<%=gallery.writer%>">
