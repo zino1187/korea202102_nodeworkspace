@@ -7,6 +7,7 @@ var totalRecord=1936; //총 레코드 수
 var pageSize=10; //페이지당 보여질 레코드 수
 var totalPage=Math.ceil(totalRecord/pageSize); //공식
 var blockSize=10; //블럭당 보여질 페이지 수
+var currentPage = param.page;//현재 페이지
 %>
 <!DOCTYPE html>
 <html>
@@ -31,6 +32,13 @@ tr:nth-child(even) {
 a{
     text-decoration: none; /* 밑줄 제거 */
 }
+
+/*페이지 번호의 스타일*/
+.pageNum{
+    font-size:20px;
+    font-weight:bold;
+    color:blue;
+}
 </style>
 </head>
 <body>
@@ -41,7 +49,7 @@ a{
 <%="pageSize(페이지당 보여질 레코드 수) 는  "+pageSize%><br>
 <%="totalPage(총 페이지 수) 는  "+totalPage%><br>
 <%="blockSize(블럭당 보여질 페이지 수) 는  "+blockSize%><br>
-
+<%="currentPage(현재 페이지 ) 는  "+currentPage%><br>
 <table>
     <tr>
         <th>No</th>
@@ -63,7 +71,8 @@ a{
         <td colspan="5" style="text-align:center">
         <a href="#">◀</a>    
         <%for(var i=1;i<=blockSize;i++){%>
-            <a href="#">[ <%=i%> ]</a>
+            <!-- pageNum  클래스는 현재 유저가 보고 있는 페이지의 경우만 a태그에 적용.. -->
+            <a href="/comments/list?currentPage=<%=i%>" class="pageNum">[ <%=i%> ]</a>
         <%}%>
         <a href="#">▶</a>
         </td>
