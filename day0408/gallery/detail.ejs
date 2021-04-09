@@ -64,7 +64,7 @@ $(function(){ //onLoad되면....
   });
 
   $($("input[type='button']")[2]).click(function(){ //수정버튼
-    edit();//숙제, 내일 아침에 풀이!!!!
+    edit();
   });
   $($("input[type='button']")[3]).click(function(){ //삭제버튼
     del();
@@ -98,6 +98,16 @@ function getList(){
 function del(){
   if(confirm("삭제하실래요?")){
     $("form").attr("action","/gallery/del");
+    $("form").attr("method","post");  
+    $("form").attr("enctype","multipart/form-data");
+    $("form").submit();//전송행위가 발생!!!    
+  }
+}
+
+//수정요청 (데이터의 양도 많고, 바이너리 파일도 포함될 수 있으므로 당연히 post(편지지=body), 봉투 X)
+function edit(){
+  if(confirm("수정하실래요?")){
+    $("form").attr("action","/gallery/edit");
     $("form").attr("method","post");  
     $("form").attr("enctype","multipart/form-data");
     $("form").submit();//전송행위가 발생!!!    

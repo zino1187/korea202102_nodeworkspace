@@ -150,6 +150,38 @@ app.post("/gallery/del", upload.single("pic") , function(request, response){
     });
 });
 
+//수정 요청 처리 (서버가 일단 업로드 컴포넌트를 사용하게 되면,  post는 무조건 업로드컴포넌트 이용해야 함)
+app.post("/gallery/edit", upload.single("pic") ,function(request, response){
+    var title=request.body.title;
+    var writer=request.body.writer;
+    var content=request.body.content;
+    var filename=request.body.filename;
+    var gallery_id=request.body.gallery_id;
+    
+    //클라이언트가 업로드를 원하는지 않하는지를 구분??
+
+    //업로드시, request객체의 json 속성 중 file 이라는 속성이 판단대상..
+    //console.log("request ", request);
+
+    if(request.file != undefined){ //업로드를 원하는것임(사진 교체)
+        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+        response.end("사진도 교체합니다.");
+        //사진지우기 +  db수정 
+        fs.unlink(__dirname+"/static/upload/"+filename, function(err){
+            if(err){
+                console.log("삭제실패", err);
+            }else{
+                var sql="update gallery set title=?, writer=?, content=?, filename=? where gallery_id=?";
+            }
+        });
+        
+    }else{ //사진 유지
+        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+        response.end("사진을 유지합니다.");
+        var sql="update gallery set title=?, writer=?, content=?  where gallery_id=?";
+    }
+
+});
 
 var server = http.createServer(app); //기본 모듈에 express 모듈 연결 
 server.listen(9999, function(){
