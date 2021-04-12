@@ -3,7 +3,8 @@
     변수화 시켜놓으면 유지보수 하기가 용이하다
     변수간의 순서는 매우 중요하다...
 */
-var totalRecord=926; //총 레코드 수 
+
+var totalRecord=param.record.length; //총 레코드 수 
 var pageSize=10; //페이지당 보여질 레코드 수
 var totalPage=Math.ceil(totalRecord/pageSize); //공식
 var blockSize=10; //블럭당 보여질 페이지 수
@@ -96,6 +97,11 @@ a{
             <a href="/comments/list?currentPage=<%=lastPage+1%>">▶</a>
         <%}%>
 
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5">
+            <button>글 등록</button>
         </td>
     </tr>
 </table>
