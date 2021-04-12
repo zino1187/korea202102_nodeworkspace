@@ -15,6 +15,10 @@ var app = express();
 app.use(static(__dirname+"/static")); //정적자원의 루트 디렉토리 등록!!!
 app.use(express.urlencoded({extended:true})); //post방식 데이터 처리 
 
+app.set("view engine", "ejs");//뷰엔진 등록 (서버 스크립트 선택..)
+//일단 뷰엔진이 등록되고 나면, 확장자를 명시할 필요 없다..왜?? views라는 정해진 
+//디렉토리를 참조할거고, 그 안에 있는 모든 파일은 다 ejs이기 때문에...
+
 //이 시점 이후 부터는 conStr변수의 값은 변할 수 없다~~(상수화 시킴)
 const conStr={
     user:"node",
@@ -47,7 +51,7 @@ app.get("/news/list", function(request, response){
                 }else{
                     console.log("result는 ",result);
 
-                    fs.readFile("./comments/list.ejs", "utf8", function(error, data){
+                    fs.readFile("./views/news/list.ejs", "utf8", function(error, data){
                         if(error){
                             console.log(error);
                         }else{
@@ -114,9 +118,9 @@ app.post("/news/regist", function(request, response){
 //상세보기 요청 처리 
 app.get("/news/detail", function(request, response){
     //express 모듈이 response객체의 기능을 업그레이드 함!!
-    response.render("./comments/detail.ejs", function(error , str){
-        
-    });
+    //response.render() 메서드는 기본적으로 views라는 정해진 디렉토리안에 
+    //정해진 뷰엔진을 찾게된다..(뷰엔진은 개발자가 선택할 수 있다..)
+    response.render("news/detail");
 });
 
 var server = http.createServer(app);
