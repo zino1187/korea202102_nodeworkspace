@@ -8,6 +8,7 @@ var mymodule=require("./lib/mymodule.js");
 
 //커밋을 디폴트로 설정하자!!
 oracledb.autoCommit=true; //쿼리문 실행시마다 트랜잭션을 commit으로 처리!!
+oracledb.fetchAsString=[oracledb.CLOB]; //clob 데이터를 string 으로
 
 var app = express();
 
@@ -120,7 +121,69 @@ app.get("/news/detail", function(request, response){
     //express 모듈이 response객체의 기능을 업그레이드 함!!
     //response.render() 메서드는 기본적으로 views라는 정해진 디렉토리안에 
     //정해진 뷰엔진을 찾게된다..(뷰엔진은 개발자가 선택할 수 있다..)
-    response.render("news/detail");
+    var news_id = request.query.news_id; //get방식으로 전송된 파라미터 받기!!
+    
+    //오라클 연동하기 
+    oracledb.getConnection(conStr, function(err, con){
+        if(err){
+            console.log("접속실패", err);
+        }else{
+            var sql="select * from news where news_id="+news_id;
+            con.execute(sql, function(error,  result){
+                if(error){
+                    console.log("SQL실행 중 에러 발생", error); //심각한 에러
+                }else{
+                    console.log("한건 가져오기 결과는 ",result);
+
+                    //댓글 목록도 가져와야 한다???
+                    sql="select * from comments order by comments_id asc";
+                    con.execute(sql, function(e, record){
+                        if(e){
+                            console.log("코멘트목록 가져오기 에러", e);
+                        }else{
+                            response.render("news/detail", {
+                                news:result.rows[0], //뉴스 목록 
+                                commentsList:record.rows //코멘트 목록
+                            });
+                        }
+                        con.close();                        
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+//코멘트 댓글 등록 요청 처리 
+app.post("/comments/regist", function(request, response){
+    //파라미터 받기 
+    var news_id=request.body.news_id;
+    var msg=request.body.msg;
+    var author=request.body.author;
+    
+    oracledb.getConnection(conStr, function(err, con){
+        if(err){
+            console.log("접속실패", err);
+        }else{
+            var sql="insert into comments(comments_id, news_id, msg, author)";
+            sql+=" values(seq_comments.nextval, :1, :2, :3)";
+
+            con.execute(sql, [news_id, msg, author ] , function(error, result){ //쿼리문 실행
+                if(error){
+                    console.log("insert 쿼리실행중 에러 발생");
+                    //server's internal fatal error !!
+                    response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
+                    response.end("이용에 불편을 드려 죄송합니다..");
+                }else{
+                    response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                    response.end(mymodule.getMsgUrl("댓글등록","/news/detail?news_id="+news_id));//클라이언트로 하여금 지정한 url로 재접속하라!!
+                }
+                con.close();
+            });
+        }
+    });
+    
 });
 
 var server = http.createServer(app);

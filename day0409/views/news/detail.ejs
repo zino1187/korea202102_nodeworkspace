@@ -54,7 +54,7 @@ $(function(){ //onLoad되면....
   CKEDITOR.replace("content");
 
   $($("input[type='button']")[0]).click(function(){ //등록버튼
-    regist();
+    edit();
   });
 
   $($("input[type='button']")[1]).click(function(){ //목록버튼
@@ -62,8 +62,8 @@ $(function(){ //onLoad되면....
   });
 });
 
-function regist(){
-  $("form").attr("action","/news/regist");  //url 은 개발자가 정한다, 단 서버랑 짝을 맞추자!!
+function edit(){
+  $("form").attr("action","/news/edit");  //url 은 개발자가 정한다, 단 서버랑 짝을 맞추자!!
   $("form").attr("method","post");  
   $("form").submit();//전송행위가 발생!!!
 }
@@ -72,6 +72,14 @@ function getList(){
 
 }
 
+//댓글 등록 요청
+function addComment(){
+  $("#comment-form").attr({
+    method:"post", 
+    action:"/comments/regist"
+  });
+  $("#comment-form").submit(); //전송
+}
 </script>
 </head>
 <body>
@@ -79,22 +87,25 @@ function getList(){
 <h3>Contact Form</h3>
 
 <div class="container">
-  <form>
-    <input type="text" name="title" placeholder="Your title..">
-    <input type="text"  name="writer" placeholder="Your name..">
-    <textarea name="content" placeholder="something content...."></textarea>
+  <form id="detail-form">
+    <input type="text" name="title" value="<%=news[1]%>">
+    <input type="text"  name="writer" value="<%=news[2]%>">
+    <textarea name="content"><%=news[3]%></textarea>
 
     <input type="button" value="등록">
     <input type="button" value="목록">
   </form>
 
   <form id="comment-form">
-    <input type="text" id="" placeholder="댓글내용" style="width:70%">
-    <input type="text" placeholder="작성자" style="width:15%">
-    <input type="button" value="댓글등록" style="width:10%">
+    <!-- 아래의 히든의 용도? 어떤 뉴스기사에 대한 댓글인지를 결정지음  -->
+    <input type="hidden" name="news_id" value="<%=news[0]%>">
+
+    <input type="text" name="msg" placeholder="댓글내용" style="width:70%">
+    <input type="text" name="author" placeholder="작성자" style="width:15%">
+    <input type="button" value="댓글등록" style="width:10%" onClick="addComment()">
   </form>
   
-  <%for(var i=0;i<10;i++){%>
+  <%for(var i=0;i<commentsList.length;i++){%>
   <div class="comment-list">
     <div style="width:70%">제목</div>    
     <div style="width:15%">작성자</div>    
