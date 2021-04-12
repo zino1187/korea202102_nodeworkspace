@@ -3,7 +3,7 @@
     변수화 시켜놓으면 유지보수 하기가 용이하다
     변수간의 순서는 매우 중요하다...
 */
-var totalRecord=1936; //총 레코드 수 
+var totalRecord=926; //총 레코드 수 
 var pageSize=10; //페이지당 보여질 레코드 수
 var totalPage=Math.ceil(totalRecord/pageSize); //공식
 var blockSize=10; //블럭당 보여질 페이지 수
@@ -11,8 +11,9 @@ var currentPage = param.page;//현재 페이지
 
 //firstPage와 lastPage의 공식을 구하는기 위한 힌트!!!!!
 //공식은 모두 이전의 변수들을 조합할 수 잇다..
-var firstPage=0; //블럭당 for문의 시작 페이지 
-var lastPage=0; //블럭당 for문의 마지막 페이지
+var firstPage=currentPage - (currentPage-1)%blockSize; //블럭당 for문의 시작 페이지 
+var lastPage=firstPage + (blockSize-1); //블럭당 for문의 마지막 페이지
+var num=totalRecord -  (currentPage-1)*pageSize ; //페이지당 시작 게시물 번호!!!! 
 %>
 <!DOCTYPE html>
 <html>
@@ -64,8 +65,9 @@ a{
         <th>조회수</th>
     </tr>
     <%for(var i=1;i<=pageSize;i++){%>
+    <%if(num<1)break; //게시물 번호가1보다 작아지면 멈추기%>        
     <tr>
-        <td>Jill</td>
+        <td><%=(num--)%></td>
         <td>Smith</td>
         <td>50</td>
         <td>50</td>
@@ -74,12 +76,26 @@ a{
     <%}%>
     <tr>
         <td colspan="5" style="text-align:center">
-        <a href="#">◀</a>    
+            
+        <%if(){%>            
+            <a href="javascript:alert('이전 페이지가 없습니다.');">◀</a> 
+        <%}else{%>
+            <a href="/comments/list?currentPage=<%=firstPage-1%>">◀</a> 
+        <%}%>    
+
         <%for(var i=firstPage;i<=lastPage;i++){%>
+            <%if(i>totalPage)break; //총 페이지수를 넘어서면 반복문 멈추기%>            
             <!-- pageNum  클래스는 현재 유저가 보고 있는 페이지의 경우만 a태그에 적용.. -->
             <a href="/comments/list?currentPage=<%=i%>" <%if(i==currentPage){%>class="pageNum"<%}%> >[ <%=i%> ]</a>
         <%}%>
-        <a href="#">▶</a>
+        
+        
+        <%if(lastPage+1 > totalPage){//lastPage+1 한 결과가 보유한 총 페이지를 넘어서면 욕!!%>
+            <a href="javascript:alert('다음 페이지가 없습니다');">▶</a>
+        <%}else{%>
+            <a href="/comments/list?currentPage=<%=lastPage+1%>">▶</a>
+        <%}%>
+
         </td>
     </tr>
 </table>
