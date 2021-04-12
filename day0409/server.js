@@ -4,11 +4,16 @@ var fs=require("fs");
 var ejs =require("ejs"); //외부-설치
 var oracledb=require("oracledb");//외부-설치
 var static = require("serve-static"); //정적자원을 처리하기위한 모듈
+var mymodule=require("./lib/mymodule.js");
+
+//커밋을 디폴트로 설정하자!!
+oracledb.autoCommit=true; //쿼리문 실행시마다 트랜잭션을 commit으로 처리!!
 
 var app = express();
 
 //미들웨어 등록 
 app.use(static(__dirname+"/static")); //정적자원의 루트 디렉토리 등록!!!
+app.use(express.urlencoded({extended:true})); //post방식 데이터 처리 
 
 //이 시점 이후 부터는 conStr변수의 값은 변할 수 없다~~(상수화 시킴)
 const conStr={
@@ -64,8 +69,45 @@ app.get("/comments/list", function(request, response){
             });
         }
     }); //오라클 접속 및 접속객체 가져오기
-    
-    
+});
+
+
+//등록요청 처리 
+app.post("/news/regist", function(request, response){
+    //파라미터 받기!!! (post)
+    var title=request.body.title;
+    var writer=request.body.writer;
+    var content=request.body.content;
+
+    //오라클에 넣기 
+    oracledb.getConnection(conStr, function(err, con){
+        if(err){
+            console.log("접속실패", err);
+        }else{
+            var sql="insert into news(news_id, title, writer, content)";
+            sql+=" values(seq_news.nextval, :1, :2, :3)";
+            con.execute(sql, [title, writer, content],  function(error, result){
+                if(error){ 
+                    console.log("등록 중 에러발생", error);
+                }else{
+                    //여기서도 무조건 등록된다는 보장은 없다...즉 오라클에 반영되었느냐 여부는
+                    //result를 통해 또 알아봐야 한다.. 
+                    console.log("result 는 ",result);
+                    if(result.rowsAffected==0){ //등록실패
+                        //status 코드란? http 통신 서버의 상태를 나타내는 기준값코드
+                        response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
+                        response.end(mymodule.getMsgUrl("등록실패","/news/list"));
+                    }else{//등록성공
+                        response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
+                        response.end(mymodule.getMsgUrl("등록성공","/news/list"));
+                    }
+                }
+                con.close(); //oracle 접속해제
+            });
+        }
+    });
+
+    response.end("");
 });
 
 var server = http.createServer(app);
