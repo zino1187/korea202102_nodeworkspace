@@ -23,7 +23,7 @@ const conStr={
 };
 
 //게시판 목록 요청 처리 
-app.get("/comments/list", function(request, response){
+app.get("/news/list", function(request, response){
     //클라이언트가 전송한 파라미터 받기!!!
     var currentPage = request.query.currentPage; //클라이언트가 보기를 원하는 페이지수
     
@@ -58,6 +58,7 @@ app.get("/comments/list", function(request, response){
                                     /*result 는 mysql과 틀리게 json객체의 rows 속성에 
                                     2차원배열에 들어있다..*/
                                     record:result.rows,
+                                    lib:mymodule /*ejs가 사용할 수 있도록 lib명으로 모듈 전달*/
                                 }
                             }); //ejs 해석 및 실행하기!!
                             response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
@@ -93,6 +94,7 @@ app.post("/news/regist", function(request, response){
                     //여기서도 무조건 등록된다는 보장은 없다...즉 오라클에 반영되었느냐 여부는
                     //result를 통해 또 알아봐야 한다.. 
                     console.log("result 는 ",result);
+
                     if(result.rowsAffected==0){ //등록실패
                         //status 코드란? http 통신 서버의 상태를 나타내는 기준값코드
                         response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
@@ -107,7 +109,14 @@ app.post("/news/regist", function(request, response){
         }
     });
 
-    response.end("");
+});
+
+//상세보기 요청 처리 
+app.get("/news/detail", function(request, response){
+    //express 모듈이 response객체의 기능을 업그레이드 함!!
+    response.render("./comments/detail.ejs", function(error , str){
+        
+    });
 });
 
 var server = http.createServer(app);
