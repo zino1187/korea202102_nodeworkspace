@@ -1,9 +1,16 @@
 var http = require("http");
-var express = require("express"); //외부
+var express = require("express"); //외부-설치
 var fs=require("fs");
-var ejs =require("ejs"); //외부
-
+var ejs =require("ejs"); //외부-설치
+var oracledb=require("oracledb");//외부-설치
 var app = express();
+
+//이 시점 이후 부터는 conStr변수의 값은 변할 수 없다~~(상수화 시킴)
+const conStr={
+    user:"node",
+    password:"node",
+    connectString:"localhost/XE"
+};
 
 //게시판 목록 요청 처리 
 app.get("/comments/list", function(request, response){
@@ -15,6 +22,14 @@ app.get("/comments/list", function(request, response){
         currentPage=1;
     }
     console.log("currentPage ", currentPage);
+
+    oracledb.getConnection(conStr, function(err, con){
+        if(err){
+            console.log("접속실패",err);
+        }else{
+            console.log("접속성공");
+        }
+    }); //오라클 접속 및 접속객체 가져오기
 
     fs.readFile("./comments/list.ejs", "utf8", function(error, data){
         if(error){

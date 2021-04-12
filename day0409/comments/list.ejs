@@ -76,8 +76,8 @@ a{
     <%}%>
     <tr>
         <td colspan="5" style="text-align:center">
-            
-        <%if(){%>            
+
+        <%if(firstPage-1 <1){%>            
             <a href="javascript:alert('이전 페이지가 없습니다.');">◀</a> 
         <%}else{%>
             <a href="/comments/list?currentPage=<%=firstPage-1%>">◀</a> 
