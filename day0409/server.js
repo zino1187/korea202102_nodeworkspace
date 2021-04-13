@@ -176,6 +176,11 @@ app.post("/comments/regist", function(request, response){
                     //server's internal fatal error !!
                     //response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
                     //response.end("이용에 불편을 드려 죄송합니다..");
+                    var str="";
+                    str+="{";
+                    str+="\"result\":0";
+                    str+="}";
+                    response.end(str); //end() 메서드는 문자열을 인수로 받는다!!!
                 }else{
                     //클라이언트가 댓글 등록요청을 비동기방식으로 요청했기 때문에, 클라이언트의 브라우저는
                     //화면이 유지도어야 한다.따라서 서버는 클라이언트가 보게될 디자인 코드를 보낼 이유가 없다..
@@ -185,7 +190,7 @@ app.post("/comments/regist", function(request, response){
                     //네트워크상으로 주고받는 데이터는 문자열화 시켜서 주고받는다!!
                     var str="";
                     str+="{";
-                    str+="\"result\":\"안녕\"";
+                    str+="\"result\":1";
                     str+="}";
                     response.end(str); //end() 메서드는 문자열을 인수로 받는다!!!
 
@@ -196,6 +201,35 @@ app.post("/comments/regist", function(request, response){
             });
         }
     });
+    
+});
+
+//코멘트 목록 가져오기 
+app.get("/comments/list", function(request, response){
+    var news_id=request.query.news_id; //해당 뉴스 기사..
+    var sql="select * from comments where news_id="+news_id;
+
+    //디비연동 
+    oracledb.getConnection(conStr, function(err, con){
+        if(err){
+            console.log("접속실패", err);
+        }else{
+            con.execute(sql, function(error, result, fields){
+                if(error){
+                    console.log("등록 에러발생", error);
+                }else{
+                    console.log("result is ", result);
+
+                    //디자인 코드가 아닌, 코멘트 목록을 보내자!!!
+                    response.writeHead(200, {"Content-Type":"text/json;charset=utf-8"});
+                    //코멘트 목록을 문자열화 시켜 보내자!!
+                    response.end(JSON.stringify(result)); 
+                }
+                con.close();
+            });
+        }
+    });
+
     
 });
 
