@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<script>
+function loadSync(){
+    //서버에 있는 자원 중 원하는 자원을 요청하는 법? 
+    //get(가져오기) /post(대량의, 숨겨진 데이터 보내기)
+    location.href="/html/memo.txt";
+    //서버와의 통신을 하러 간 주체는 메인 실행부라서, 만일 서버에서
+    //응답이 없을 경우, 메인실행부가 계속 무한대기에 빠지므로
+    //현재 페이지에 대한 사용자의 이벤트(클릭, 글씨입력 등등) 
+    //반응이 불가, 단 장점이라면, 메인실행부가 통신을 담당하기 때문에
+    //언제 서버의 응답이 도달햇는지를 정확히 알수가 있다..
+}
+
+//비동기 방식으로 , 요청을 시도해본다!! 
+//이때는 메인실행부가 요청을 시도하는 것이 아니므로, 현재 페이지에 대한 사용자의 
+//이벤트 처리, UI, 그래픽 처리 등이 가능하다.. 
+//현실과 비유하자면, 왼손으로 밥먹고, 오른손으로 글씨쓰는 동시 작업을 하는것과 같다..
+//단점, 별도의 실행부가 통신을 시도하기 때문에 서버측에서 언제 응답을 완료했는지를 
+//메인실행부가 알수가 없다., 따라서 통신 완료시점에 대해서는 별도의 실행부로 부터 
+//전달받아야 한다..이러한 문제를 ajax라는 기술로 반영해놓았다..
+function loadAsync(){
+    var xhttp = new XMLHttpRequest(); //비동기통신 객체
+
+    //별도의 실행부가 백그라운드에서 서버에 요청을 하러 떠났기때문에, 메인실행부가 
+    //서버의 응답 도착 시점을 알기 위해서는 아래와 같은 이벤트 처리가 지원된다..
+    //서버의 상태를 메인 실행부에 알려준다!!
+    xhttp.onreadystatechange = function() {
+        alert("클라이언트의 요청에 대한 처리단계는 "+this.readyState);
+        /*
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("demo").innerHTML = this.responseText;
+        }
+        */
+    };    
+    xhttp.open("GET","/html/memo.txt", true); //요청할 주소, 비동기 여부등을 지정 true비동기
+    xhttp.send(); //통신하러 출발~~ 즉 요청 시작~~
+}
+</script>
+</head>
+<body>
+    <button onClick="loadSync()">동기로 가져오기</button>    
+    <button onClick="loadAsync()">비동기로 가져오기</button>    
+</body>
+</html>
+
