@@ -174,11 +174,23 @@ app.post("/comments/regist", function(request, response){
                 if(error){
                     console.log("insert 쿼리실행중 에러 발생");
                     //server's internal fatal error !!
-                    response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
-                    response.end("이용에 불편을 드려 죄송합니다..");
+                    //response.writeHead(500, {"Content-Type":"text/html;charset=utf-8"});
+                    //response.end("이용에 불편을 드려 죄송합니다..");
                 }else{
-                    response.writeHead(200, {"Content-Type":"text/html;charset=utf-8"});
-                    response.end(mymodule.getMsgUrl("댓글등록","/news/detail?news_id="+news_id));//클라이언트로 하여금 지정한 url로 재접속하라!!
+                    //클라이언트가 댓글 등록요청을 비동기방식으로 요청했기 때문에, 클라이언트의 브라우저는
+                    //화면이 유지도어야 한다.따라서 서버는 클라이언트가 보게될 디자인 코드를 보낼 이유가 없다..
+                    //왜? 보내는 순간 화면이 바뀌어 버리므로,,(이것은 클라이언트가 원하는게 아니다!!!!!)
+                    //그럼 뭐를 보내야 하나?  디자인 일부에 사용할 데이터만 보내면 된다!!
+                    response.writeHead(200, {"Content-Type":"text/json;charset=utf-8"});
+                    //네트워크상으로 주고받는 데이터는 문자열화 시켜서 주고받는다!!
+                    var str="";
+                    str+="{";
+                    str+="\"result\":\"안녕\"";
+                    str+="}";
+                    response.end(str); //end() 메서드는 문자열을 인수로 받는다!!!
+
+                    //response.end("클라이언트의 브라우저에 대체될 내용 ha ha ah ");
+                    //response.end(mymodule.getMsgUrl("댓글등록","/news/detail?news_id="+news_id));//클라이언트로 하여금 지정한 url로 재접속하라!!
                 }
                 con.close();
             });

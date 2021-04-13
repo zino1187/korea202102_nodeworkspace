@@ -76,11 +76,30 @@ function getList(){
 
 //댓글 등록 요청
 function addComment(){
+  /*
   $("#comment-form").attr({
     method:"post", 
     action:"/comments/regist"
   });
   $("#comment-form").submit(); //전송
+  */
+  //화면의 일부만 변경하기 위해(부분변경)서, 백그라운드에서 요청을 시도해 본다 
+  var xhttp = new XMLHttpRequest();//비동기 객체 생성 
+
+  //이벤트 처리 
+  xhttp.onreadystatechange=function(){
+    if(this.readyState==4 && this.status==200){
+      //서버에서 성공된 응답데이터가 온 시점이다!!
+      alert("서버로부터 받은 결과는 "+this.responseText);
+    }     
+  }
+
+  xhttp.open("POST", "/comments/regist", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  var msg=$("input[name='msg']").val();//댓글 내용
+  var author=$("input[name='author']").val();//댓글 작성자
+
+  xhttp.send("news_id=<%=news[0]%>&msg="+msg+"&author="+author);
 }
 </script>
 </head>

@@ -31,19 +31,27 @@ function loadAsync(){
     //서버의 응답 도착 시점을 알기 위해서는 아래와 같은 이벤트 처리가 지원된다..
     //서버의 상태를 메인 실행부에 알려준다!!
     xhttp.onreadystatechange = function() {
-        alert("클라이언트의 요청에 대한 처리단계는 "+this.readyState);
-        /*
+        //alert("클라이언트의 요청에 대한 처리단계는 "+this.readyState);
+        
+        //응답을 받되, 요청 처리가 성공된 경우에만...
         if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("demo").innerHTML = this.responseText;
+            document.getElementById("box").innerHTML = this.responseText;
         }
-        */
+        
     };    
     xhttp.open("GET","/html/memo.txt", true); //요청할 주소, 비동기 여부등을 지정 true비동기
     xhttp.send(); //통신하러 출발~~ 즉 요청 시작~~
 }
+/*
+비동기와 동기는 그럼 언제써야 할까? 
+동기: 페이지 전체의 변경이 필요할때   네이버 --> daum 페이지를 보고자할때(전체변경)
+비동기: 현제 페이지는 유지하고, 화면의 일부분만 바꾸고 싶을때(부분변경)
+
+*/
 </script>
 </head>
 <body>
+    <div id="box">여기에 뭐가 들어올까?</div>        
     <button onClick="loadSync()">동기로 가져오기</button>    
     <button onClick="loadAsync()">비동기로 가져오기</button>    
 </body>
