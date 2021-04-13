@@ -122,14 +122,14 @@ function getCommentsList(){
   xhttp.onreadystatechange=function(){
     //서버가 무사히 처리를 했고, 응답이 왔다면... 두가지 조건을 만족하는 코드 작성 
     if(this.readyState==4 && this.status==200){
-      alert("서버로부터 받은 데이터는 "+this.responseText);
+      //alert("서버로부터 받은 데이터는 "+this.responseText);
       //서버가  json문자열로 전송햇기 깨문에, 다시 json으로 복원을 하여 사용해보자!
       var json = JSON.parse(this.responseText); //문자열을 to json으로...
-      alert("코멘트 게시물 수는 "+json.rows.length); //2차원배열의 길이~!!!
+      //alert("코멘트 게시물 수는 "+json.rows.length); //2차원배열의 길이~!!!
 
       //서버로부터 받은 데이터를 화면에 갱신시켜 보자, 이때 개발자는 DOM지식이 있어야
       //html을 동적으로 변경시킨다..
-      printCommentsList();
+      printCommentsList(json.rows);
     }
   }
   xhttp.open("GET", "/comments/list?news_id=<%=news[0]%>", true);
@@ -137,11 +137,17 @@ function getCommentsList(){
 }
 
 //댓글 출력!!!
-function printCommentsList(){
+function printCommentsList(arr){
   //출력전에, 기존에 등록된 댓글을 싹!~~ 지우자, 그후 다시 반복문 돌리자!!
   $("#comments_wrapper").html("");  //innerHTML="" 동일
+  console.log(arr);
 
-  $("#comments_wrapper").html("<div>테스트</div>");
+  for(var i=0;i<arr.length;i++){ //게시물 수만큼 반복문 수행
+    var msg=arr[i][2];//메시지
+    var author=arr[i][3];//작성자
+    var writeDay=arr[i][4].substring(0,10);//등록일
+    var c = new Comments(document.getElementById("comments_wrapper"), msg, author, writeDay);
+  }
 
 }
 </script>
@@ -186,6 +192,5 @@ function printCommentsList(){
     <%}%>
   </div>    
 </div>
-
 </body>
 </html>

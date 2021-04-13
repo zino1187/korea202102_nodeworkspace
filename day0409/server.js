@@ -44,7 +44,11 @@ app.get("/news/list", function(request, response){
         }else{
             console.log("접속성공");
             //쿼리문 실행 
-            var sql="select * from news order by news_id desc";
+            var sql="select  n.news_id, title, writer, regdate, hit , count(msg) as cnt";
+            sql+=" from news n  left outer join  comments c";
+            sql+=" on n.news_id=c.news_id";
+            sql+=" group by n.news_id, title, writer, regdate, hit";      
+            sql+=" order by n.news_id desc";
 
             con.execute(sql, function(error, result){
                 if(error){
@@ -208,6 +212,7 @@ app.post("/comments/regist", function(request, response){
 app.get("/comments/list", function(request, response){
     var news_id=request.query.news_id; //해당 뉴스 기사..
     var sql="select * from comments where news_id="+news_id;
+    sql+=" order by comments_id desc";
 
     //디비연동 
     oracledb.getConnection(conStr, function(err, con){

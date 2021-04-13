@@ -29,7 +29,7 @@ class Comments{
         this.writeDayDiv.innerHTML=this.writeDay;
 
         //wrapper에 동적으로 css class적용 
-        this.wrapper.classList.add("comment-list");
+        this.wrapper.classList.add("comment-list");  //  <div class='헤더에 정의해놓은 클래스명'>
 
         //div간 조립
         this.wrapper.appendChild(this.msgDiv);
