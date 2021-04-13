@@ -136,8 +136,8 @@ app.get("/news/detail", function(request, response){
                     console.log("한건 가져오기 결과는 ",result);
 
                     //댓글 목록도 가져와야 한다???
-                    sql="select * from comments order by comments_id asc";
-                    con.execute(sql, function(e, record){
+                    sql="select * from comments where news_id=:1 order by comments_id asc";
+                    con.execute(sql,[ news_id ] ,function(e, record){
                         if(e){
                             console.log("코멘트목록 가져오기 에러", e);
                         }else{
