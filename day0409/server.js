@@ -143,7 +143,8 @@ app.get("/news/detail", function(request, response){
                         }else{
                             response.render("news/detail", {
                                 news:result.rows[0], //뉴스 목록 
-                                commentsList:record.rows //코멘트 목록
+                                commentsList:record.rows, //코멘트 목록
+                                lib:mymodule
                             });
                         }
                         con.close();                        
