@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/admin_topnavi.css">
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+* {
+    box-sizing: border-box;
+}
+
+input[type=text],
+select,
+textarea, input[type=file] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+input[type=button] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=button]:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+</style>
+</head>
+<body>
+    <%- include ('../inc/top_navi')%>
+<h3>Contact Form</h3>
+
+<div class="container">
+    <form action="/action_page.php">
+        <select>
+            <option value="">상위 카테고리 선택</option>
+        </select>
+
+        <select>
+            <option value="">하위 카테고리 선택</option>
+        </select>
+        <input type="text" id="fname" name="firstname" placeholder="상품명..">
+        <input type="text" id="lname" name="lastname" placeholder="가격..">
+        <input type="text" id="lname" name="lastname" placeholder="브랜드..">
+        <textarea placeholder="상세설명.." style="height:200px"></textarea>
+        <input type="file">
+        <input type="checkbox" name="" id="">85
+        <input type="checkbox" name="" id="">90
+        <input type="checkbox" name="" id="">95
+        <input type="checkbox" name="" id="">100
+        <input type="checkbox" name="" id="">105
+        <input type="checkbox" name="" id="">110
+        <p></p>
+        <input type="button" value="Submit">
+    </form>
+    </div>
+</body>
+</html>
