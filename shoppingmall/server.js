@@ -62,7 +62,7 @@ app.post("/admin/login", function(request, response){
 
 //관리자 모드 메인 요청 처리 
 app.get("/admin/main", function(request, response){
-    response.end("this page is admin main!!!");
+    response.render("admin/main");
 });
 
 var server = http.createServer(app);
