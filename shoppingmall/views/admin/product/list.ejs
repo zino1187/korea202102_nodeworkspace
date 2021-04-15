@@ -1,0 +1,69 @@
+<%
+    var totalRecord=90026; //총레코드 수
+    var pageSize=10; //페이지당 보여질 레코드 수
+    var totalPage=Math.ceil(totalRecord/pageSize); //2.6 을 3으로 올림, 총 페이지수
+    var blockSize=10;//블럭당 보여질 페이지 수
+    var currentPage=param.currentPage;//=넘겨받은 페이지정보; //현재 페이지
+%>
+<%="당신이 현재 보고 있는 페이지는 "+currentPage%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/admin_topnavi.css">
+<style>
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+td,
+th {
+    text-align: left;
+    padding: 16px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+</style>
+</head>
+<body>
+
+<%- include ('../inc/top_navi')%>    
+<h2>Zebra Striped Table</h2>
+
+<table>
+    <tr>
+        <th>No</th>
+        <th>하위카테고리</th>
+        <th>이미지</th>
+        <th>상품이름</th>
+        <th>가격</th>
+        <th>브랜드</th>
+    </tr>
+    <%for(var i=1;i<=pageSize;i++){%>
+    <tr>
+        <td>Jill</td>
+        <td>Smith</td>
+        <td>50</td>
+        <td>50</td>
+        <td>50</td>
+        <td>50</td>
+    </tr>
+    <%}%>
+    <tr>
+        <td colspan="6" style="text-align:center">
+            <a href="/admin/product/list">◀</a>
+            <%for(var i=1;i<=blockSize;i++){%>
+                <a href="/admin/product/list?currentPage=<%=i%>">[<%=i%>]</a>
+            <%}%>   
+            <a href="/admin/product/list">▶</a>                 
+        </td>
+    </tr>
+</table>
+</body>
+</html>
