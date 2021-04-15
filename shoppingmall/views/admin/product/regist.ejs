@@ -61,7 +61,21 @@ function getSubList(obj){
             var subArray=JSON.parse(this.responseText);//서버가 보낸 데이터가 문자열이므로...                 
             //alert(subArray[0]);
             //서브 카테고리의 select박스를 동적으로 제어...
+            var subcategory_id=document.getElementById("subcategory_id");
+            //기존의 option 은 모두~~지우기
+            var len = subcategory_id.length;
+            for(var i=0;i<len;i++){
+                subcategory_id.remove(0);                    
+            }    
 
+            //만들고 싶은 수만큼 option 요소를 생성하자!!!
+            for(var i=0;i<subArray.length;i++){
+                var sub=subArray[i]; //배열에서 json 객체 1개를 꺼내기!!
+                var op=document.createElement("option"); // <option></option> 과 동일
+                op.text=sub.sub_name; // <option>아무거나</option> 과 동일
+                op.value=sub.subcategory_id;//<option value="데이터">아무거나</option> 과 동일
+                subcategory_id.add(op);//select박스에 option추가
+            }
         }
     }
     xhttp.open("get","/admin/product/sublist?topcategory_id="+obj.value, true);
