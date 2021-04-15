@@ -65,6 +65,48 @@ app.get("/admin/main", function(request, response){
     response.render("admin/main");
 });
 
+
+//상품 관리 페이지 요청 처리 
+app.get("/admin/product/registform", function(request, response){
+    var sql="select * from topcategory";
+
+    var con = mysql.createConnection(conStr);
+    con.query(sql, function(err, result, fields){
+        if(err){
+            console.log("상위 카테고리 조회 실패", err);
+        }else{
+            console.log(result);
+            response.render("admin/product/regist", {
+                record:result /*배열을 ejs에 전달*/
+            });            
+        }                 
+        con.end();        
+    });
+});
+
+//선택된 상위카테고리에 소속된 하위카테고리 목록가져오기 
+//이 요청은 클라이언트가 비동기로 요청해야 됨...
+//그래야, 결과 전달시 하위 카테고리만 전달하면 되니깐...
+app.get("/admin/product/sublist", function(request, response){
+    
+    var topcategory_id = request.query.topcategory_id; //파라미터 받기
+    var sql="select * from subcategory where topcategory_id="+topcategory_id;
+
+    //쿼리문 실행~~~~
+    var con = mysql.createConnection(conStr);
+    con.query(sql, function(err, result, fields){
+        if(err){
+            console.log("하위목록 가져오기 실패", err);
+        }else{
+            console.log("result is ", result);
+            //어떤 페이지를 보여줘야 하나?
+            response.writeHead(200,{"Content-Type":"text/html;charset=utf-8"});
+            response.end(JSON.stringify(result));
+        }
+        con.end();
+    });
+});
+
 var server = http.createServer(app);
 server.listen(9999, function(){
     console.log("Shopping mall is running at 9999 port...");
