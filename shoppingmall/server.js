@@ -46,6 +46,10 @@ app.use(express.urlencoded({
 app.set("view engine","ejs"); //등록 후엔 자동으로 무도건 views 라는 디렉토리 하위에서
 //ejs를 찾아나선다.따라서 views라는 정해진 디렉토리를 무조건 존재시켜야 한다!!
 
+
+/*-------------------------------------------------------------------------
+쇼핑몰 관리자 측 요청 처리 
+-------------------------------------------------------------------------*/
 //관리자모드 로그인 폼 요청 
 app.get("/admin/loginform", function(request, response){
     response.render("admin/login");
@@ -193,6 +197,48 @@ app.get("/admin/product/list", function(request, response){
         con.end();
     });
 });
+
+/*-------------------------------------------------------------------------
+쇼핑몰 클라이언트 측 요청 처리 
+-------------------------------------------------------------------------*/
+//쇼핑몰 메인 요청 처리 
+app.get("/shop/main", function(request ,response){
+    //네비게이션의 카테고리 가져오기 
+    var sql="select * from topcategory";
+
+    var con=mysql.createConnection(conStr);
+    con.query(sql, function(err, result, fields){
+        if(err){
+            console.log("최상위 카테고리 가져오기 실패", err);
+        }else{
+            response.render("shop/index", {
+                topList:result                
+            });            
+        }
+        con.end();
+    });
+    
+});
+
+//쇼핑상품 목록 요청 처리 
+app.get("/shop/list", function(request, response){
+    //네비게이션의 카테고리 가져오기 
+    var sql="select * from topcategory";
+
+    var con=mysql.createConnection(conStr);
+    con.query(sql, function(err, result, fields){
+        if(err){
+            console.log("최상위 카테고리 가져오기 실패", err);
+        }else{
+            response.render("shop/shop", {
+                topList:result                
+            });            
+        }
+        con.end();
+    });
+
+});
+
 
 var server = http.createServer(app);
 server.listen(9999, function(){
