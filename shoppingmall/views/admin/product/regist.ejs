@@ -65,7 +65,7 @@ function getSubList(obj){
             //기존의 option 은 모두~~지우기
             var len = subcategory_id.length;
             for(var i=0;i<len;i++){
-                subcategory_id.remove(0);                    
+                subcategory_id.remove(1);                    
             }    
 
             //만들고 싶은 수만큼 option 요소를 생성하자!!!
@@ -84,6 +84,46 @@ function getSubList(obj){
 
 //상품 등록 요청하기!!
 function regist(){
+    //유효성 체크 
+    if(document.getElementById("topcategory_id").value=="0"){
+        alert("최상위 카테고리를 선택하셔야 합니다");
+        return;
+    }
+    if(document.getElementById("subcategory_id").value=="0"){ 
+        alert("하위 카테고리를 선택하셔야 합니다");
+        return;
+    }
+    if(document.getElementById("product_name").value==""){
+        alert("상품명을 입력하세요");
+        document.getElementById("product_name").focus();
+        return;
+    }
+    if(document.getElementById("price").value==""){
+        alert("가격을 입력하세요");
+        document.getElementById("price").focus();
+        return;
+    }
+    //isNaN  == is not a number 즉 숫자가 아닌 것을 잡아내기 위한 함수 따라서 
+    //숫자가 아니면 true 를 반환 
+    if(isNaN(document.getElementById("price").value)){
+        alert("가격은 숫자로 입력하세요");
+        document.getElementById("price").focus();
+        return;
+    }
+    if(document.getElementById("brand").value==""){
+        alert("브랜드명을 입력하세요");
+        document.getElementById("brand").focus();
+        return;
+    }
+    if(document.getElementById("detail").value==""){
+        alert("상세 설명을 입력하세요");
+        document.getElementById("detail").focus();
+        return;
+    }
+    if(document.getElementById("product_img").value==""){
+        alert("상품 이미지를 선택하세요");
+        return;
+    }
     //tag간에 구조적인 소속관계는 DOM화 되었을때도 그래도 유지된다..
     //따라서 form 태그를 접근할때 반드시 id, name 이외에도 DOM의 소속관계로 접근도
     //가능하다..
@@ -103,23 +143,24 @@ function regist(){
 
 <div class="container">
     <form name="form1">
-        <select name="topcategory_id" onChange="getSubList(this)">
-            <option value="">상위 카테고리 선택</option>
+        <select id="topcategory_id" name="topcategory_id" onChange="getSubList(this)">
+            <option value="0">상위 카테고리 선택</option>
             <%for(var i=0;i<record.length;i++){%>
                 <% var topcategory = record[i];//배열에 들어있는 json 꺼내기!!%>
             <option value="<%=topcategory.topcategory_id%>"><%=topcategory.top_name%></option>
             <%}%>                    
         </select>
         
-        <select id="subcategory_id">
-            <option value=""></option>
+        <select id="subcategory_id" name="subcategory_id">
+            <option value="0">하위 카테고리 선택</option>
         </select>
 
-        <input type="text" name="product_name" placeholder="상품명..">
-        <input type="text" id="lname" name="lastname" placeholder="가격..">
-        <input type="text" id="lname" name="lastname" placeholder="브랜드..">
-        <textarea placeholder="상세설명.." style="height:200px"></textarea>
-        <input type="file" name="product_img">
+        <input type="text" id="product_name" name="product_name" placeholder="상품명..">
+        <input type="text" id="price" name="price" placeholder="가격..">
+        <input type="text" id="brand" name="brand" placeholder="브랜드..">
+        <textarea placeholder="상세설명.." id="detail" name="detail" style="height:200px"></textarea>
+        <input type="file" id="product_img" name="product_img">
+
         <input type="checkbox" name="" id="">85
         <input type="checkbox" name="" id="">90
         <input type="checkbox" name="" id="">95

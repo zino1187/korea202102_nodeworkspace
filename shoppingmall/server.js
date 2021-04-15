@@ -4,6 +4,7 @@ var express=require("express");
 var static = require("serve-static");//정적자원 처리를 위한 외부모듈 (설치)
 var ejs=require("ejs"); //설치
 var mysql=require("mysql"); //설치
+var path = require("path"); //확장자 추출 등 파일경로와 관련된 처리 모듈
 var multer = require("multer"); //파일업로드 처리 모듈
                                               //이 모듈이 기존의 순수한 request  객체를 분석해서
                                               //파일, 파라미터 등을 처리해놓았다!!
@@ -133,8 +134,16 @@ app.get("/admin/product/sublist", function(request, response){
 app.post("/admin/product/regist", upload.single("product_img") ,function(request, response){
     //상품 정보 파라미터들 받기!!!
     //upload.single() 을 명시하면, multer 를 이용하여 파라미터를 받을 수 있게 된다..
+    var subcategory_id=request.body.subcategory_id; 
     var product_name = request.body.product_name;
-    console.log(product_name);        
+    var price=request.body.price;
+    var brand=request.body.brand;
+    var detail=request.body.detail;
+    var filename=request.file.filename;
+
+        
+
+    console.log(request.file);        
 });
 
 var server = http.createServer(app);
