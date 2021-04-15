@@ -141,9 +141,39 @@ app.post("/admin/product/regist", upload.single("product_img") ,function(request
     var detail=request.body.detail;
     var filename=request.file.filename;
 
-        
+    var sql="insert into product(subcategory_id, product_name, price, brand, detail, filename)";    
+    sql+=" values(?,?,?,?,?,?)";
+    var con = mysql.createConnection(conStr);
 
-    console.log(request.file);        
+    con.query(sql, [subcategory_id, 
+        product_name, 
+        price, 
+        brand, 
+        detail, 
+        filename]  , function(err, fields){
+            if(err){
+                console.log("등록중 에러", err);
+            }else{
+                //클라이언트로 하여금 지정한 url로 재접속을 유도함
+                response.redirect("/admin/product/list");
+            }
+            con.end();
+    });    
+});
+
+//상품 목록 요청 처리
+app.get("/admin/product/list", function(request, response){
+    var currentPage = 1; //기본적인 페이지 디폴트 값은 1로 한다..
+
+    //누군가가 페이지 아래 링크를 눌렀다면,, currentPaget 파라미터가 넘어온다..
+    if(request.query.currentPage!=undefined){
+        currentPage=request.query.currentPage;
+    }
+    response.render("admin/product/list", {
+        param:{
+            "currentPage":currentPage
+        }
+    });
 });
 
 var server = http.createServer(app);
