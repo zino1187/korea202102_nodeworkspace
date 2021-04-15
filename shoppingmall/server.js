@@ -4,6 +4,14 @@ var express=require("express");
 var static = require("serve-static");//정적자원 처리를 위한 외부모듈 (설치)
 var ejs=require("ejs"); //설치
 var mysql=require("mysql"); //설치
+var multer = require("multer"); //파일업로드 처리 모듈
+                                              //이 모듈이 기존의 순수한 request  객체를 분석해서
+                                              //파일, 파라미터 등을 처리해놓았다!!
+                                              //따라서 클라이언트가 파일을 전송하기 위한 인코딩타입인
+                                              //multipart/form-data를 명시하는 순간부터는, 순수한   
+                                              //request로는 파일처리 및 파라미터를 받을수 없으며 
+                                              //업로드 모듈을 통해 업무를 처리해야 한다..
+                                              //jsp, php, asp 등등 언어도 원히가 동일하다..
 var mymodule=require("./lib/mymodule.js");
 
 const conStr={
@@ -12,6 +20,19 @@ const conStr={
     password:"1234",
     database:"shoppingmall"
 };
+
+//기존의 순수 요청 정보를 담고있는 request 객체를 multer에게 전달해주자
+//그러면 multer가 요청을 분석을 해준다
+var upload = multer({
+    storage: multer.diskStorage({
+        destination:function(request, file, cb){
+            cb(null, __dirname+"/static/product");
+        },
+        filename:function(request, file, cb){
+            cb(null, new Date().valueOf()+path.extname(file.originalname));
+        }
+    })    
+});
 
 var app = express();
 
@@ -105,6 +126,15 @@ app.get("/admin/product/sublist", function(request, response){
         }
         con.end();
     });
+});
+
+
+//상품 등록 요청 처리 
+app.post("/admin/product/regist", upload.single("product_img") ,function(request, response){
+    //상품 정보 파라미터들 받기!!!
+    //upload.single() 을 명시하면, multer 를 이용하여 파라미터를 받을 수 있게 된다..
+    var product_name = request.body.product_name;
+    console.log(product_name);        
 });
 
 var server = http.createServer(app);

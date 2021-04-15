@@ -80,8 +80,21 @@ function getSubList(obj){
     }
     xhttp.open("get","/admin/product/sublist?topcategory_id="+obj.value, true);
     xhttp.send();//요청 출발!!!
-}    
+}   
 
+//상품 등록 요청하기!!
+function regist(){
+    //tag간에 구조적인 소속관계는 DOM화 되었을때도 그래도 유지된다..
+    //따라서 form 태그를 접근할때 반드시 id, name 이외에도 DOM의 소속관계로 접근도
+    //가능하다..
+    //현재페이지에 대해 window나 document가 하나밖에 없기 때문에 즉 유일하기 때문에
+    //생략이 가능하다..
+    form1.action="/admin/product/regist";
+    form1.method="post";
+    form1.encoding="multipart/form-data"; //바이너리 파일이 form에 포함될 경우..
+                                                                //즉 텍스트만 뿐 아니라 파일도 보낼경우  
+    form1.submit(); //전송                                                                                                                                  
+}
 </script>
 </head>
 <body>
@@ -89,7 +102,7 @@ function getSubList(obj){
 <h3>Contact Form</h3>
 
 <div class="container">
-    <form action="/action_page.php">
+    <form name="form1">
         <select name="topcategory_id" onChange="getSubList(this)">
             <option value="">상위 카테고리 선택</option>
             <%for(var i=0;i<record.length;i++){%>
@@ -102,11 +115,11 @@ function getSubList(obj){
             <option value=""></option>
         </select>
 
-        <input type="text" id="fname" name="firstname" placeholder="상품명..">
+        <input type="text" name="product_name" placeholder="상품명..">
         <input type="text" id="lname" name="lastname" placeholder="가격..">
         <input type="text" id="lname" name="lastname" placeholder="브랜드..">
         <textarea placeholder="상세설명.." style="height:200px"></textarea>
-        <input type="file">
+        <input type="file" name="product_img">
         <input type="checkbox" name="" id="">85
         <input type="checkbox" name="" id="">90
         <input type="checkbox" name="" id="">95
@@ -114,7 +127,7 @@ function getSubList(obj){
         <input type="checkbox" name="" id="">105
         <input type="checkbox" name="" id="">110
         <p></p>
-        <input type="button" value="Submit">
+        <input type="button" value="Submit" onClick="regist()">
     </form>
     </div>
 </body>
