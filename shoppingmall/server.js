@@ -169,10 +169,28 @@ app.get("/admin/product/list", function(request, response){
     if(request.query.currentPage!=undefined){
         currentPage=request.query.currentPage;
     }
-    response.render("admin/product/list", {
-        param:{
-            "currentPage":currentPage
+
+    var sql="select product_id, s.subcategory_id, sub_name, product_name";
+    sql+=", price, brand, filename";
+    sql+=" from subcategory s,  product p";
+    sql+=" where s.subcategory_id = p.subcategory_id";    
+
+    var con=mysql.createConnection(conStr);
+
+    con.query(sql, function(err, result, fields){
+        if(err){
+            console.log("상품 리스트 가져오기실패", err);
+        }else{
+            console.log(result);
+
+            response.render("admin/product/list", {
+                param:{
+                    "currentPage":currentPage,
+                    "record":result
+                }
+            });
         }
+        con.end();
     });
 });
 
