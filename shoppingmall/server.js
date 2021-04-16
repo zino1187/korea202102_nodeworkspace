@@ -14,6 +14,8 @@ var multer = require("multer"); //파일업로드 처리 모듈
                                               //업로드 모듈을 통해 업무를 처리해야 한다..
                                               //jsp, php, asp 등등 언어도 원히가 동일하다..
 var mymodule=require("./lib/mymodule.js");
+var expressSession=require("express-session"); //서버측 세션을 관리하는 모듈
+
 
 const conStr={
     url:"localhost",
@@ -21,6 +23,7 @@ const conStr={
     password:"1234",
     database:"shoppingmall"
 };
+
 
 //기존의 순수 요청 정보를 담고있는 request 객체를 multer에게 전달해주자
 //그러면 multer가 요청을 분석을 해준다
@@ -41,6 +44,13 @@ app.use(static(__dirname+"/static")); //정적자원의 최상위 루트를 설�
 app.use(express.urlencoded({
     extended:true
 }));//post 요청의 파라미터 받기위함
+
+//세션 설정 
+app.use(expressSession({
+    secret:"key secret",
+    resave:true,
+    saveUninitialized:true
+}));
 
 //템플릿 뷰 엔진 등록 (서버 스크립트의 위치 등록)
 app.set("view engine","ejs"); //등록 후엔 자동으로 무도건 views 라는 디렉토리 하위에서
@@ -71,13 +81,25 @@ app.post("/admin/login", function(request, response){
         }else{
             //console.log("result는 ",result);
             //로그인이 일치 하는지 않하는지? 
-            
+
             if(result.length <1){
                 console.log("로그인 실패");
                 //이전 화면으로 강제로 되돌리기  history.back()
                 response.writeHead(200,{"Content-Type":"text/html;charset=utf-8"});
                 response.end(mymodule.getMsgBack("로그인 정보가 올바르지 않습니다"));
             }else{
+                //로그인 성공 시점!~!
+                //데이터베이스 조회가 성공되었으므로, 이 관리자의 정보를 세션 영역에 
+                //담아놓자..이렇게 하면, 추후 접속이 끊어진 이후에 클라이언트가 재 요청을
+                //들어오더라도 이미 서버측의 메모리에 존재하는 세션을참고하여 재 인증하지
+                //않아도 된다!!! 즉 마치 웹이 네트워크를 유지할 수 있는 것(stateful)처럼
+                //보여질 수 있다..원래 웹은 네트워트 연결 유지가 불가능하다...
+                request.session.user={
+                    admin_id: result[0].admin_id,
+                    master_id:result[0].master_id,
+                    master_pass:result[0].master_pass,
+                    master_name:result[0].master_name
+                };
                 response.writeHead(200,{"Content-Type":"text/html;charset=utf-8"});
                 response.end(mymodule.getMsgUrl("로그인성공","/admin/main"));
             }
@@ -88,14 +110,17 @@ app.post("/admin/login", function(request, response){
 
 //관리자 모드 메인 요청 처리 
 app.get("/admin/main", function(request, response){
-    response.render("admin/main");
+    //인증 받은 관리자의 정보를 DB가 아닌 메모리 영역의 세션을 이용하여 가져오기 !!!    
+    response.render("admin/main", {
+        adminUser:request.session.user
+    });
 });
 
 
 //상품 관리 페이지 요청 처리 
 app.get("/admin/product/registform", function(request, response){
     var sql="select * from topcategory";
-
+    
     var con = mysql.createConnection(conStr);
     con.query(sql, function(err, result, fields){
         if(err){
