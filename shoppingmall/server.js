@@ -94,7 +94,7 @@ app.post("/admin/login", function(request, response){
                 //들어오더라도 이미 서버측의 메모리에 존재하는 세션을참고하여 재 인증하지
                 //않아도 된다!!! 즉 마치 웹이 네트워크를 유지할 수 있는 것(stateful)처럼
                 //보여질 수 있다..원래 웹은 네트워트 연결 유지가 불가능하다...
-                request.session.user={
+                request.session.admin={
                     admin_id: result[0].admin_id,
                     master_id:result[0].master_id,
                     master_pass:result[0].master_pass,
@@ -110,29 +110,35 @@ app.post("/admin/login", function(request, response){
 
 //관리자 모드 메인 요청 처리 
 app.get("/admin/main", function(request, response){
-    //인증 받은 관리자의 정보를 DB가 아닌 메모리 영역의 세션을 이용하여 가져오기 !!!    
-    response.render("admin/main", {
-        adminUser:request.session.user
-    });
+    //main.ejs는 아무나 보여주면 안된다!! 즉, 인증을 거친 사람만이 볼 수 있는 페이지다
+    //따라서 인증과정을 수행햇는지 여부는 request.session 객체에 개발자가 의도한 
+    //변수가 존재하는지 여부로 판단해야 한다..
+    checkAdminSession(request, response, "admin/main");
 });
 
 
 //상품 관리 페이지 요청 처리 
 app.get("/admin/product/registform", function(request, response){
-    var sql="select * from topcategory";
-    
-    var con = mysql.createConnection(conStr);
-    con.query(sql, function(err, result, fields){
-        if(err){
-            console.log("상위 카테고리 조회 실패", err);
-        }else{
-            console.log(result);
-            response.render("admin/product/regist", {
-                record:result /*배열을 ejs에 전달*/
-            });            
-        }                 
-        con.end();        
-    });
+    if(request.session.admin==undefined){ //세션에 담겨진 변수가 없다면.. 즉 로그인을 거쳐서 들어온 사용자가 아니라면...
+        response.writeHead(200,{"Content-Type":"text/html;charset=utf-8"});
+        response.end(mymodule.getMsgBack("관리자 인증이 필요한 서비스입니다"));
+    }else{
+        //관리자모드의 모든 app.get(), app.post()마다 다 넣어줘야 한다..
+        var sql="select * from topcategory";
+        
+        var con = mysql.createConnection(conStr);
+        con.query(sql, function(err, result, fields){
+            if(err){
+                console.log("상위 카테고리 조회 실패", err);
+            }else{
+                console.log(result);
+                response.render("admin/product/regist", {
+                    record:result /*배열을 ejs에 전달*/
+                });            
+            }                 
+            con.end();        
+        });
+    }        
 });
 
 //선택된 상위카테고리에 소속된 하위카테고리 목록가져오기 
@@ -264,6 +270,20 @@ app.get("/shop/list", function(request, response){
 
 });
 
+/*---------------------------------------------------
+세션 체크
+---------------------------------------------------*/
+function checkAdminSession(request, response, url){
+    if(request.session.admin){ //  undefined가 아니라면..
+        //인증 받은 관리자의 정보를 DB가 아닌 메모리 영역의 세션을 이용하여 가져오기 !!!    
+        response.render(url, {
+            adminUser:request.session.admin
+        });
+    }else{
+        response.writeHead(200,{"Content-Type":"text/html;charset=utf-8"});
+        response.end(mymodule.getMsgBack("관리자 인증이 필요한 서비스입니다."));
+    }
+}
 
 var server = http.createServer(app);
 server.listen(9999, function(){
