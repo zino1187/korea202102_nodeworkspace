@@ -18,7 +18,7 @@ app.use(express.static(__dirname+"/static"));
 //노드js 뿐만 아니라, asp, php, jsp 등등은 일단 업로드 컴포넌트를 사용할 경우 
 //모든 post는 이  업로드 컴포넌트를 통해 처리된다..
 var upload = multer({
-    storage: multer.diskStorage({
+		storage: multer.diskStorage({
         destination:function(request, file, cb){
             cb(null, __dirname+"/static/upload");
         },
