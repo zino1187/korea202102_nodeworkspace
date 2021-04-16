@@ -1,0 +1,42 @@
+create table  topcategory(
+  topcategory_id int primary key auto_increment
+ , top_name varchar(40)
+) default  character set utf8;
+
+create table subcategory(
+    subcategory_id int primary key auto_increment
+  , topcategory_id int
+  , sub_name varchar(40)
+  , constraint  fk_topsub  foreign key (topcategory_id) 
+    references topcategory(topcategory_id)
+) default  character set utf8;
+
+create table product(
+   product_id  int primary key auto_increment
+ , subcategory_id	int
+ , product_name varchar(40)
+ , price	int  default  0
+ , brand	varchar(30)
+ , detail	text
+ , filename varchar(40)
+ , constraint fk_subproduct foreign key(subcategory_id) 
+   references subcategory(subcategory_id)
+) default  character set utf8;
+
+create table size_info(
+    size_info_id  int  primary key auto_increment
+  , product_id int 
+  , size varchar(5)
+  , constraint fk_productsize foreign key(product_id) 
+    references product(product_id)
+) default  character set utf8;
+
+create  table  sub_image(
+    sub_image_id	int primary key auto_increment
+  , product_id	int
+  , img_name varchar(40)
+  , constraint fk_productimg foreign key(product_id) 
+     references  product(product_id)
+);
+
+341468  41000
