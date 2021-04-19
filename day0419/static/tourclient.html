@@ -25,11 +25,37 @@
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+var mapProp;    
+var map;
+function initMap(){
+    //카메라 중심점 설정
+    mapProp= {
+        center:new google.maps.LatLng(36.6685709156919, 126.79848471046789),
+        zoom:7,
+    };
+    map = new google.maps.Map(document.getElementById("content"),mapProp);
+
+    //마커 생성 
+    //createMarker();
+}   
+
+function createMarker(jsonArray){
+    //관광지 수만큼 반복문 실행
+    for(var i=0;i<jsonArray.result.length;i++){
+        var json = jsonArray.result[i];//관광명소 한개를 꺼내기~
+
+        var latLng=new google.maps.LatLng(json.lat, json.lng);//위도,경도
+        var marker = new google.maps.Marker({position: latLng});
+        marker.setMap(map);//마커를 맵에 적용    
+    }
+}
+
 $(function(){
     $("button").click(function(){
         loadData();
     });
-});    
+}); 
+
 function loadData(){
         //뒤에 오는 익명함수가 순수 js 에서의 if(readyState==4일때와 같다..)
         //익명함수의 첫번째 매개변수는 순수 js 어작스에서의 this.responseText이다
@@ -48,7 +74,10 @@ function loadData(){
             url:"/tourlist",
             success:function(result,status,xhr){ //200일때..
                 /*result==responseText, status=status코드, xhr 어작스객체*/
-                alert(result);
+                //서버가 mime 타입을 text/json 으로 지정해서 전송했기 때문에 별도의 JSON 파싱을 할필요없슴
+                //alert("게시물 수는 "+result.result.length);
+                //관광지 수에 따른 마커 생성을 하되 비동기적으로 생성...새로고침 없슴..
+                createMarker(result);
             },
             error:function(){ //500등의 에러일때..
 
@@ -60,7 +89,8 @@ function loadData(){
 <body>
     <div class="wrapper">
         <div class="side"><button>Load</button></div>        
-        <div id="content">맵나올곳</div>
+        <div id="content"></div>
     </div>    
 </body>
 </html>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVq7GVb_aquB5XjOQH6p0glxjberH3194&callback=initMap"></script>
