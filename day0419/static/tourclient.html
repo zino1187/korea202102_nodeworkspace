@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+.wrapper{
+    width:100%;
+    height:700px;
+    overflow: hidden;
+}    
+.side{
+    width:10%;
+    height:100%;
+    background:#ccc;
+    float:left;
+}
+#content{
+    width:90%;
+    height:100%;
+    float:left;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(function(){
+    $("button").click(function(){
+        loadData();
+    });
+});    
+function loadData(){
+        //뒤에 오는 익명함수가 순수 js 에서의 if(readyState==4일때와 같다..)
+        //익명함수의 첫번째 매개변수는 순수 js 어작스에서의 this.responseText이다
+        //익명함수의 두번째 매개변수는 서버의 응답코드이다
+        /*
+        $.get("https://tour.chungbuk.go.kr/openapi/tourInfo/stay.do", function(data, status){
+            alert(data);
+        });
+        */
+
+       //Get, Post 방식을 지정할 수 있는 또 다른 메서드를 사용해보자!
+       //주의: 웹브라우저 클라이언트는 현재 보고 있는 html을 배포한 서버와 통신이 
+       //가능하다, 여기서 통신이란 요청과 응답을 말한다..
+        $.ajax({
+            type:"GET",
+            url:"/tourlist",
+            success:function(result,status,xhr){ //200일때..
+                /*result==responseText, status=status코드, xhr 어작스객체*/
+                alert(result);
+            },
+            error:function(){ //500등의 에러일때..
+
+            }                                    
+        });
+}
+</script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="side"><button>Load</button></div>        
+        <div id="content">맵나올곳</div>
+    </div>    
+</body>
+</html>
