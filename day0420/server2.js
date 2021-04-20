@@ -10,8 +10,10 @@ const url = 'http://apis.data.go.kr/1400000/service/cultureInfoService/mntInfoOp
 const serviceKey="TPK6sq5VdCOFrijK99CmJHQCEVer9GwK4sxLvP6ED6dBExrBc6FO298QjQadJsw7C4sDZ8yBXJfsYZ%2FVT6LG0A%3D%3D"; //나의 서비스 키
 
 app.get("/mt", function(request ,response){
+    var mt_name=request.query.mt_name; //GET방식의 파라미터로 받자!!
+
     var queryParams = '?' + encodeURIComponent('ServiceKey') + '='+serviceKey; /* Service Key*/
-    queryParams += '&' + encodeURIComponent('searchWrd') + '=' + encodeURIComponent('북한산'); /* */
+    queryParams += '&' + encodeURIComponent('searchWrd') + '=' + encodeURIComponent(mt_name); /* */
     
     req({
         url: url + queryParams,
